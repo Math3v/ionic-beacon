@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController } from 'ionic-angular';
+import { NavController, Platform } from 'ionic-angular';
 import {
   IBeacon,
   IBeaconDelegate,
@@ -21,8 +21,13 @@ export class HomePage {
 
   constructor(
     public navCtrl: NavController,
+    private platform: Platform,
     private beacon: IBeacon
-  ) { }
+  ) {
+    this.platform.ready().then(_ => {
+      this.requestBeacon()
+    })
+  }
 
   requestBeacon() {
     this.beacon.requestAlwaysAuthorization()
