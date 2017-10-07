@@ -22,7 +22,9 @@ export class HomePage {
   constructor(
     public navCtrl: NavController,
     private beacon: IBeacon
-  ) {
+  ) { }
+
+  requestBeacon() {
     this.beacon.requestAlwaysAuthorization()
     .then(_ => this.beaconStatus = 'Authorized')
     .catch(err => this.setBeaconError(err));
