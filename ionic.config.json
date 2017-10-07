@@ -2,5 +2,7 @@
   "name": "stewardo-beacon",
   "app_id": "a8737806",
   "type": "ionic-angular",
-  "integrations": {}
+  "integrations": {
+    "cordova": {}
+  }
 }

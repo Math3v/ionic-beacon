@@ -7,8 +7,12 @@
 </ion-header>
 
 <ion-content padding>
-  The world is your oyster.
+  <button (click)="startMonitoring()" ion-button>Start</button>
+  <button (click)="stopMonitoring()"  ion-button>Stop</button>
   <p>
-    If you get lost, the <a href="http://ionicframework.com/docs/v2">docs</a> will be your guide.
+    {{ beacons | json }}
+  </p>
+  <p>
+    Status: {{ beaconStatus }}
   </p>
 </ion-content>
