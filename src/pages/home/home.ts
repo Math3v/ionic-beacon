@@ -15,7 +15,7 @@ export class HomePage {
 
   beaconStatus: string = '';
   delegate: IBeaconDelegate;
-  beacons: Array<Beacon> = [];
+  beacons: any = {};
 
   private unsubscribe: Function;
 
@@ -30,7 +30,7 @@ export class HomePage {
   }
 
   requestBeacon() {
-    this.beacon.requestAlwaysAuthorization()
+    this.beacon.requestWhenInUseAuthorization()
     .then(_ => this.beaconStatus = 'Authorized')
     .catch(err => this.setBeaconError(err));
   }
@@ -39,7 +39,7 @@ export class HomePage {
     this.delegate = this.beacon.getDelegate();
     const sub = this.delegate.didRangeBeaconsInRegion()
     .subscribe((result: IBeaconPluginResult) => {
-      this.beacons = result.beacons;
+      this.beacons = result;
     });
 
     this.unsubscribe = sub.unsubscribe;
