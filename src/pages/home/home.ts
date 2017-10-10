@@ -1,11 +1,6 @@
 import { Component } from '@angular/core';
 import { NavController, Platform } from 'ionic-angular';
-import {
-  IBeacon,
-  IBeaconDelegate,
-  IBeaconPluginResult,
-  Beacon
-} from '@ionic-native/ibeacon';
+import { IBeacon, IBeaconPluginResult, Beacon, BeaconRegion } from '@ionic-native/ibeacon';
 
 @Component({
   selector: 'page-home',
@@ -14,10 +9,10 @@ import {
 export class HomePage {
 
   beaconStatus: string = '';
-  delegate: IBeaconDelegate;
-  beacons: any = {};
+  didEnterBeacons: Array<Beacon> = [];
+  didRangeBeacons: Array<Beacon> = [];
 
-  private unsubscribe: Function;
+  private beaconRegion: BeaconRegion;
 
   constructor(
     public navCtrl: NavController,
@@ -25,30 +20,41 @@ export class HomePage {
     private beacon: IBeacon
   ) {
     this.platform.ready().then(_ => {
-      this.requestBeacon()
+      this.requestBeacon();
+      this.beaconRegion = this.beacon.BeaconRegion(
+       'testingBeacon','A0E8D710-4317-FA0E-12F6-5FCCB1DD8975'
+      );
     })
   }
 
   requestBeacon() {
-    this.beacon.requestWhenInUseAuthorization()
+    this.beacon.requestAlwaysAuthorization()
     .then(_ => this.beaconStatus = 'Authorized')
     .catch(err => this.setBeaconError(err));
   }
 
   startMonitoring() {
-    this.delegate = this.beacon.getDelegate();
-    const sub = this.delegate.didRangeBeaconsInRegion()
-    .subscribe((result: IBeaconPluginResult) => {
-      this.beacons = result;
+    const delegate = this.beacon.getDelegate();
+
+    delegate.didEnterRegion()
+    .subscribe((res: IBeaconPluginResult) => {
+      this.didEnterBeacons = res.beacons;
     });
 
-    this.unsubscribe = sub.unsubscribe;
+    delegate.didRangeBeaconsInRegion()
+    .subscribe((res: IBeaconPluginResult) => {
+      this.didRangeBeacons = res.beacons;
+    });
+
+    this.beacon.startMonitoringForRegion(this.beaconRegion)
+    .then(_ => this.beaconStatus = 'Monitoring...',
+          e => this.beaconStatus = JSON.stringify(e));
   }
 
   stopMonitoring() {
-    if(this.unsubscribe) {
-       this.unsubscribe();
-    }
+    this.beacon.stopMonitoringForRegion(this.beaconRegion)
+    .then(_ => this.beaconStatus = 'Stopped',
+          e => this.beaconStatus = JSON.stringify(e));
   }
 
   private setBeaconError(err) {

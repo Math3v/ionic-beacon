@@ -7,13 +7,17 @@
 </ion-header>
 
 <ion-content padding>
-  <button (click)="requestBeacon()"   ion-button>Enable</button>
+  <p>
+    Status: {{ beaconStatus }}
+  </p>
   <button (click)="startMonitoring()" ion-button>Start</button>
   <button (click)="stopMonitoring()"  ion-button>Stop</button>
   <p>
-    {{ beacons | json }}
+    Range Beacons:
+    {{ didRangeBeacons | json }}
   </p>
   <p>
-    Status: {{ beaconStatus }}
+    Enter Beacons:
+    {{ didEnterBeacons | json }}
   </p>
 </ion-content>
