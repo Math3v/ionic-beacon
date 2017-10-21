@@ -72,13 +72,13 @@ export class HomePage {
       delegate.didEnterRegion()
       .subscribe((res: IBeaconPluginResult) => {
         this.beaconStatuses.push('Entered region');
-        this.didEnterBeacons.concat( res.beacons );
+        this.didEnterBeacons = this.didEnterBeacons.concat( res.beacons );
       });
   
       delegate.didRangeBeaconsInRegion()
       .subscribe((res: IBeaconPluginResult) => {
         this.beaconStatuses.push('Ranged beacon');
-        this.didRangeBeacons.concat( res.beacons );
+        this.didRangeBeacons = this.didRangeBeacons.concat( res.beacons );
       });
     });
   }
