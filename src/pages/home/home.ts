@@ -36,21 +36,11 @@ export class HomePage {
   startMonitoring() {
     this.beaconStatus = 'Initializing...';
 
-    const delegate = this.beacon.getDelegate();
-
-    // delegate.didEnterRegion()
-    // .subscribe((res: IBeaconPluginResult) => {
-    //   this.didEnterBeacons = res.beacons;
-    // });
-
-    // delegate.didRangeBeaconsInRegion()
-    // .subscribe((res: IBeaconPluginResult) => {
-    //   this.didRangeBeacons = res.beacons;
-    // });
-
     this.beacon.startMonitoringForRegion(this.beaconRegion)
-    .then(_ => this.beaconStatus = 'Monitoring...',
-          e => this.beaconStatus = JSON.stringify(e));
+    .then(_ => {
+      this.initializeObservables();
+      this.beaconStatus = 'Monitoring...';
+    }, e => this.beaconStatus = JSON.stringify(e));
   }
 
   stopMonitoring() {
@@ -61,5 +51,19 @@ export class HomePage {
 
   private setBeaconError(err) {
     this.beaconStatus = JSON.stringify(err);
+  }
+
+  private initializeObservables() {
+    const delegate = this.beacon.getDelegate();
+
+    delegate.didEnterRegion()
+    .subscribe((res: IBeaconPluginResult) => {
+      this.didEnterBeacons = res.beacons;
+    });
+
+    delegate.didRangeBeaconsInRegion()
+    .subscribe((res: IBeaconPluginResult) => {
+      this.didRangeBeacons = res.beacons;
+    });
   }
 }
