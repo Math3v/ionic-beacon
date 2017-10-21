@@ -34,17 +34,19 @@ export class HomePage {
   }
 
   startMonitoring() {
+    this.beaconStatus = 'Initializing...';
+
     const delegate = this.beacon.getDelegate();
 
-    delegate.didEnterRegion()
-    .subscribe((res: IBeaconPluginResult) => {
-      this.didEnterBeacons = res.beacons;
-    });
+    // delegate.didEnterRegion()
+    // .subscribe((res: IBeaconPluginResult) => {
+    //   this.didEnterBeacons = res.beacons;
+    // });
 
-    delegate.didRangeBeaconsInRegion()
-    .subscribe((res: IBeaconPluginResult) => {
-      this.didRangeBeacons = res.beacons;
-    });
+    // delegate.didRangeBeaconsInRegion()
+    // .subscribe((res: IBeaconPluginResult) => {
+    //   this.didRangeBeacons = res.beacons;
+    // });
 
     this.beacon.startMonitoringForRegion(this.beaconRegion)
     .then(_ => this.beaconStatus = 'Monitoring...',
