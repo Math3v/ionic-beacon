@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { NavController, Platform } from 'ionic-angular';
 import { IBeacon, IBeaconPluginResult, Beacon, BeaconRegion } from '@ionic-native/ibeacon';
 
@@ -6,7 +6,7 @@ import { IBeacon, IBeaconPluginResult, Beacon, BeaconRegion } from '@ionic-nativ
   selector: 'page-home',
   templateUrl: 'home.html'
 })
-export class HomePage {
+export class HomePage implements OnInit {
 
   beaconStatus: string = '';
   didEnterBeacons: Array<Beacon> = [];
@@ -18,13 +18,15 @@ export class HomePage {
     public navCtrl: NavController,
     private platform: Platform,
     private beacon: IBeacon
-  ) {
+  ) { }
+
+  ngOnInit() {
     this.platform.ready().then(_ => {
       this.requestBeacon();
       this.beaconRegion = this.beacon.BeaconRegion(
        'testingBeacon','A0E8D710-4317-FA0E-12F6-5FCCB1DD8975'
       );
-    })
+    });
   }
 
   requestBeacon() {
