@@ -8,7 +8,7 @@
 
 <ion-content padding>
   <p>
-    Status: {{ beaconStatus }}
+    Status: {{ beaconStatuses | json }}
   </p>
   <button (click)="startMonitoring()" ion-button>Start</button>
   <button (click)="stopMonitoring()"  ion-button>Stop</button>

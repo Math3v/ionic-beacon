@@ -9,6 +9,7 @@ import { IBeacon, IBeaconPluginResult, Beacon, BeaconRegion } from '@ionic-nativ
 export class HomePage {
 
   beaconStatus: string = '';
+  beaconStatuses: Array<string> = [];
   didEnterBeacons: Array<Beacon> = [];
   didRangeBeacons: Array<Beacon> = [];
 
@@ -22,31 +23,33 @@ export class HomePage {
     this.platform.ready().then(_ => {
       this.requestBeacon();
       this.beaconRegion = this.beacon.BeaconRegion(
-        //'testingBeacon', 'B9407F30-F5F8-466E-AFF9-25556B57FE6D'
-        'testingBeacon', 'A0E8D710-4317-FA0E-12F6-5FCCB1DD8975'
+        'testingBeacon', 'B9407F30-F5F8-466E-AFF9-25556B57FE6D'
+        //'testingBeacon', 'A0E8D710-4317-FA0E-12F6-5FCCB1DD8975'
       );
     });
   }
 
   requestBeacon() {
     this.beacon.requestAlwaysAuthorization()
-    .then(_ => this.beaconStatus = 'Authorized')
+    .then(_ => this.beaconStatuses.push('Authorized'))
     .catch(err => this.setBeaconError(err));
   }
 
   startMonitoring() {
-    this.beaconStatus = 'Initializing...';
+    this.beaconStatuses.push('Initializing');
 
-    this.beacon.startMonitoringForRegion(this.beaconRegion)
+    this.initializeObservables()
     .then(_ => {
-      this.initializeObservables();
-      this.beaconStatus = 'Monitoring...';
-    }, e => this.beaconStatus = JSON.stringify(e));
+      this.beaconStatuses.push('Obserables ready');
+      return this.beacon.startMonitoringForRegion(this.beaconRegion);
+    }).then(_ => this.beaconStatuses.push('Monitoring'))
+    .catch(e => this.beaconStatuses.push(JSON.stringify(e)));
+    
   }
 
   stopMonitoring() {
     this.beacon.stopMonitoringForRegion(this.beaconRegion)
-    .then(_ => this.beaconStatus = 'Stopped',
+    .then(_ => this.beaconStatuses.push('Stopped'),
           e => this.beaconStatus = JSON.stringify(e));
   }
 
@@ -55,18 +58,28 @@ export class HomePage {
   }
 
   private initializeObservables() {
-    const delegate = this.beacon.Delegate();
+    this.beaconStatuses.push('Initializing observables');
 
-    delegate.didEnterRegion()
-    .subscribe((res: IBeaconPluginResult) => {
-      this.beaconStatus = 'Entered region';
-      this.didEnterBeacons = res.beacons;
-    });
+    return this.beacon.isBluetoothEnabled()
+    .then(_ => {
+      this.beaconStatuses.push('Bluetooth Enabled');
+      return this.beacon.onDomDelegateReady();
+    }).then(_ => {
+      this.beaconStatuses.push('Dom Delegate ready');
+      const delegate = this.beacon.Delegate();
+      this.beaconStatuses.push('Got Delegate');
 
-    delegate.didRangeBeaconsInRegion()
-    .subscribe((res: IBeaconPluginResult) => {
-      this.beaconStatus = 'Range region';
-      this.didRangeBeacons = res.beacons;
+      delegate.didEnterRegion()
+      .subscribe((res: IBeaconPluginResult) => {
+        this.beaconStatuses.push('Entered region');
+        this.didEnterBeacons.concat( res.beacons );
+      });
+  
+      delegate.didRangeBeaconsInRegion()
+      .subscribe((res: IBeaconPluginResult) => {
+        this.beaconStatuses.push('Ranged beacon');
+        this.didRangeBeacons.concat( res.beacons );
+      });
     });
   }
 }
