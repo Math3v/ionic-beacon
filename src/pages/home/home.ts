@@ -22,7 +22,8 @@ export class HomePage {
     this.platform.ready().then(_ => {
       this.requestBeacon();
       this.beaconRegion = this.beacon.BeaconRegion(
-       'testingBeacon','A0E8D710-4317-FA0E-12F6-5FCCB1DD8975'
+        'testingBeacon', 'B9407F30-F5F8-466E-AFF9-25556B57FE6D'
+       //'testingBeacon','A0E8D710-4317-FA0E-12F6-5FCCB1DD8975'
       );
     });
   }
@@ -54,15 +55,17 @@ export class HomePage {
   }
 
   private initializeObservables() {
-    const delegate = this.beacon.getDelegate();
+    const delegate = this.beacon.Delegate();
 
     delegate.didEnterRegion()
     .subscribe((res: IBeaconPluginResult) => {
+      this.beaconStatus = 'Entered region';
       this.didEnterBeacons = res.beacons;
     });
 
     delegate.didRangeBeaconsInRegion()
     .subscribe((res: IBeaconPluginResult) => {
+      this.beaconStatus = 'Range region';
       this.didRangeBeacons = res.beacons;
     });
   }
