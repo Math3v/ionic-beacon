@@ -1,20 +1,20 @@
 <ion-header>
   <ion-navbar>
     <ion-title>
-      Ionic Blank
+      Beacon Ranging
     </ion-title>
   </ion-navbar>
 </ion-header>
 
 <ion-content padding>
   <p>
-    Status: {{ beaconStatuses | json }}
+    Status: {{ beaconStatus }}
   </p>
   <button (click)="startMonitoring()" ion-button>Start</button>
   <button (click)="stopMonitoring()"  ion-button>Stop</button>
   <div>
     <ul>
-      <li *ngFor="let beacon of didRangeBeacons">
+      <li *ngFor="let beacon of beacons">
         <span>{{ beacon.major }}</span>
         <span>{{ beacon.minor }}</span>
         <span>{{ beacon.rssi }}</span>
@@ -22,12 +22,4 @@
       </li>
     </ul>
   </div>
-  <p>
-    Range Beacons:
-    {{ didRangeBeacons | json }}
-  </p>
-  <p>
-    Enter Beacons:
-    {{ didEnterBeacons | json }}
-  </p>
 </ion-content>
