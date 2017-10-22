@@ -1,6 +1,6 @@
 import { Component, ChangeDetectorRef } from '@angular/core';
 import { NavController, Platform } from 'ionic-angular';
-import { IBeacon, IBeaconPluginResult, Beacon, BeaconRegion } from '@ionic-native/ibeacon';
+import { IBeacon, IBeaconPluginResult, Beacon, BeaconRegion, IBeaconDelegate } from '@ionic-native/ibeacon';
 
 @Component({
   selector: 'page-home',
@@ -34,7 +34,7 @@ export class HomePage {
   }
 
   startMonitoring() {
-    this.initializeObservables()
+    this.initObservables()
     .then(_ => this.beacon.startRangingBeaconsInRegion(this.beaconRegion))
     .catch(e => this.setBeaconError(e));
     
@@ -50,17 +50,20 @@ export class HomePage {
     this.beaconStatus = JSON.stringify(err);
   }
 
-  private initializeObservables() {
+  private initObservables() {
     return this.beacon.isBluetoothEnabled()
     .then(_ => this.beacon.onDomDelegateReady())
     .then(_ => {
       const delegate = this.beacon.Delegate();
-  
-      delegate.didRangeBeaconsInRegion()
-      .subscribe((res: IBeaconPluginResult) => {
-        this.beacons = res.beacons;
-        this.cd.detectChanges();
-      });
+      this.initRangeObservable(delegate);
+    });
+  }
+
+  private initRangeObservable(delegate: IBeaconDelegate) {
+    delegate.didRangeBeaconsInRegion()
+    .subscribe((res: IBeaconPluginResult) => {
+      this.beacons = res.beacons;
+      this.cd.detectChanges();
     });
   }
 }
