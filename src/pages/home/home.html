@@ -7,19 +7,28 @@
 </ion-header>
 
 <ion-content padding>
-  <p>
-    Status: {{ beaconStatus }}
-  </p>
-  <button (click)="startMonitoring()" ion-button>Start</button>
-  <button (click)="stopMonitoring()"  ion-button>Stop</button>
-  <div>
-    <ul>
-      <li *ngFor="let beacon of beacons">
-        <span>{{ beacon.major }}</span>
-        <span>{{ beacon.minor }}</span>
-        <span>{{ beacon.rssi }}</span>
-        <span>{{ beacon.proximity }}</span>
-      </li>
-    </ul>
-  </div>
+  <ion-grid>
+    <ion-row>
+      <ion-col col-6>
+          <button (click)="startMonitoring()" ion-button block>Start</button>
+      </ion-col>
+      <ion-col col-6>
+          <button (click)="stopMonitoring()"  ion-button block>Stop</button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <ion-list>
+    <button ion-item *ngFor="let beacon of beacons">
+      {{ beacon.rssi }} - {{beacon.proximity}}
+    </button>  
+  </ion-list>
 </ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+    <ion-title>
+      {{ beaconStatus }}
+    </ion-title>
+  </ion-toolbar>
+</ion-footer>
