@@ -30,7 +30,7 @@ export class HomePage {
   }
 
   requestBeacon() {
-    this.beacon.requestAlwaysAuthorization()
+    this.beacon.requestWhenInUseAuthorization()
     .then(_ => this.beaconStatuses.push('Authorized'))
     .catch(err => this.setBeaconError(err));
   }
@@ -41,8 +41,15 @@ export class HomePage {
     this.initializeObservables()
     .then(_ => {
       this.beaconStatuses.push('Obserables ready');
-      return this.beacon.startMonitoringForRegion(this.beaconRegion);
-    }).then(_ => this.beaconStatuses.push('Monitoring'))
+      //return this.beacon.startMonitoringForRegion(this.beaconRegion);
+      return this.beacon.startRangingBeaconsInRegion(this.beaconRegion);
+    }).then(_ => {
+      this.beaconStatuses.push('Monitoring');
+      return this.beacon.requestStateForRegion(this.beaconRegion)
+    }).then(_ => {
+      this.beaconStatuses.push('Requested state');
+      //this.beacon.startRangingBeaconsInRegion
+    })
     .catch(e => this.beaconStatuses.push(JSON.stringify(e)));
     
   }
@@ -80,6 +87,11 @@ export class HomePage {
         this.beaconStatuses.push('Ranged beacon');
         this.didRangeBeacons = this.didRangeBeacons.concat( res.beacons );
       });
+
+      delegate.didDetermineStateForRegion()
+      .subscribe((res: IBeaconPluginResult) => {
+        this.beaconStatuses.push(JSON.stringify(res));
+      })
     });
   }
 }
