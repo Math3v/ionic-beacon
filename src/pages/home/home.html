@@ -12,6 +12,16 @@
   </p>
   <button (click)="startMonitoring()" ion-button>Start</button>
   <button (click)="stopMonitoring()"  ion-button>Stop</button>
+  <div>
+    <ul>
+      <li *ngFor="let beacon of didRangeBeacons">
+        <span>{{ beacon.major }}</span>
+        <span>{{ beacon.minor }}</span>
+        <span>{{ beacon.rssi }}</span>
+        <span>{{ beacon.proximity }}</span>
+      </li>
+    </ul>
+  </div>
   <p>
     Range Beacons:
     {{ didRangeBeacons | json }}

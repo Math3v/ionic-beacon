@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { NavController, Platform } from 'ionic-angular';
 import { IBeacon, IBeaconPluginResult, Beacon, BeaconRegion } from '@ionic-native/ibeacon';
 
@@ -18,7 +18,8 @@ export class HomePage {
   constructor(
     public navCtrl: NavController,
     private platform: Platform,
-    private beacon: IBeacon
+    private beacon: IBeacon,
+    private cd: ChangeDetectorRef
   ) {
     this.platform.ready().then(_ => {
       this.requestBeacon();
@@ -55,7 +56,7 @@ export class HomePage {
   }
 
   stopMonitoring() {
-    this.beacon.stopMonitoringForRegion(this.beaconRegion)
+    this.beacon.stopRangingBeaconsInRegion(this.beaconRegion)
     .then(_ => this.beaconStatuses.push('Stopped'),
           e => this.beaconStatus = JSON.stringify(e));
   }
@@ -84,8 +85,10 @@ export class HomePage {
   
       delegate.didRangeBeaconsInRegion()
       .subscribe((res: IBeaconPluginResult) => {
-        this.beaconStatuses.push('Ranged beacon');
-        this.didRangeBeacons = this.didRangeBeacons.concat( res.beacons );
+        //this.beaconStatuses.push('Ranged beacon');
+        //this.didRangeBeacons = this.didRangeBeacons.concat( res.beacons );
+        this.didRangeBeacons = res.beacons;
+        this.cd.detectChanges();
       });
 
       delegate.didDetermineStateForRegion()
